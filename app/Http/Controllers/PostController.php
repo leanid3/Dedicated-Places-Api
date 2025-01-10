@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PostRequest;
+use App\Http\Resources\PostJsonResource;
 use App\Models\Post\Category;
 use App\Models\Post\Post;
 use http\Env\Response;
@@ -20,22 +21,22 @@ class PostController extends Controller
 
         $posts = Post::with('category')->paginate(20);
         if(!$posts) return response()->json(['error'=> 'в этом разделе ничего нет'], 404);
-        return response()->json($posts);
+        return PostJsonResource::collection($posts);
     }
 
-    public function getOneFull(int $id)
+    public function getOneFull(int $post_id)
     {
-        $post = Post::all()->find($id);
+        $post = Post::all()->find($post_id);
         if (!$post) {
             return response()->json(['message' => 'пост не найден'], 404);
         }
-        return response()->json($post);
+        return new PostJsonResource($post);
     }
 
     public function getFindQuery(string $query)
     {
         $posts = Post::all()->where('title', 'like', '%' . $query . '%');
-        return response()->json($posts);
+        return PostJsonResource::collection($posts);
     }
 
     /**
@@ -45,29 +46,29 @@ class PostController extends Controller
     {
         $post = $request->validated();
         Post::created($post);
-        return response()->json($post, 201);
+        return new PostJsonResource($post);
     }
 
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(int $id)
+    public function edit(int $post_id)
     {
-        $post = Post::all()->find($id);
+        $post = Post::all()->find($post_id);
         if (!$post) {
             return response()->json(['message' => 'пост не найден'], 404);
         }
-        return response()->json($post);
+        return new PostJsonResource($post);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(PostRequest $request, int $id)
+    public function update(PostRequest $request, int $post_id)
     {
         $data = $request->validated();
-        $post = Post::all()->find($id);
+        $post = Post::all()->find($post_id);
 
         if (!$post) {
             return response()->json(['message' => 'пост не найден'], 404);
@@ -80,15 +81,15 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function delete(int $id)
+    public function delete(int $post_id)
     {
-        $post = Post::all()->find($id);
+        $post = Post::all()->find($post_id);
         if (!$post) {
             return response()->json(['message' => 'не удалось найти пост для удаления'], 404);
         }
 
 
-        if (Post::destroy($id)) {
+        if (Post::destroy($post_id)) {
             return response()->json(['message' => 'пост успешно удален']);
         }
         return response()->json(['message' => 'не удалось удалить пост '], 500);
