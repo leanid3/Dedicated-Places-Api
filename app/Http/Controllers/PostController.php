@@ -6,7 +6,6 @@ use App\Http\Requests\PostRequest;
 use App\Http\Resources\PostJsonResource;
 use App\Models\Post\Category;
 use App\Models\Post\Post;
-use http\Env\Response;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -75,7 +74,7 @@ class PostController extends Controller
         }
 
         $post->update($data);
-        return response()->json($post, '200', ['title' => 'пост добавлен успешно']);
+        return new PostJsonResource($post);
     }
 
     /**

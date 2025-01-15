@@ -25,7 +25,7 @@ class PostJsonResource extends JsonResource
             "status" => $this->status,
             "type" => $this->type,
             "stock" => $this->stock,
-            "price" => $this->price,
+            "price" => $this->pricez,
             "params" => $this->params,
             "SEO_title" => $this->SEO_title,
             "SEO_description" => $this->SEO_description,
@@ -42,6 +42,6 @@ class PostJsonResource extends JsonResource
         return [
             'message' => $request->message,
             'status' => $request->status,
-        ]
+        ];
     }
 }
