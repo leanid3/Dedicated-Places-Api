@@ -1,8 +1,11 @@
 <?php
 
+use App\Models\Post\Category;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use PharIo\Manifest\Author;
 
 return new class extends Migration
 {
@@ -13,17 +16,16 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->bigIncrements('post_id');
-            $table->unsignedBigInteger('category_id'); // Указываем вручную
-            $table->foreign('category_id')->references('category_id')->on('categories')->onDelete('cascade');
-//            $table->foreignId('category_id')->constrained('categories')->on('categories')->onDelete('cascade');
+            $table->foreignIdFor(Category::class, 'category_id');
             $table->string('title');
             $table->text('content');
             $table->text('excerpt')->nullable();
             $table->string('slug')->nullable()->unique();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->enum('status', ['published', 'draft', 'deleted'])->default('published');
+            $table->foreignIdFor(User::class, 'user_id');
+            $table->enum('status', ['published', 'draft', 'deleted','archived'])->default('published');
+            $table->enum('type', ['article', 'news', 'review'])->default('article');
             $table->integer('stock')->nullable()->default(0);
-            $table->integer('price')->nullable()->default(0);
+            $table->decimal('price', 10, 2)->nullable()->default(0);
             $table->json('params')->nullable();
             $table->string('SEO_title')->nullable();
             $table->text('SEO_description')->nullable();

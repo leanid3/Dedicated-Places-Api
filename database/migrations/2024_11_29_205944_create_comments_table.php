@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Post\Comment;
+use App\Models\Post\Post;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,19 +18,12 @@ return new class extends Migration
             $table->id();
 
             // Убираем дублирование для 'parent_id'
-            $table->unsignedBigInteger('parent_id')->nullable();
-            $table->foreign('parent_id')->references('id')->on('comments')->onDelete('cascade'); // Внешний ключ для родительского комментария
-
+            $table->foreignIdFor(Comment::class, 'parent_id');
             $table->string('title');
             $table->text('comment');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
-
-            // Внешний ключ для поста
-            $table->unsignedBigInteger('post_id')->nullable();
-            $table->foreign('post_id')->references('post_id')->on('posts')->onDelete('cascade');
-            // Внешний ключ для пользователя (автора комментария)
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
-
+            $table->foreignIdFor(Post::class, 'post_id');
+            $table->foreignIdFor(User::class, 'user_id');
             $table->timestamps();
         });
     }
