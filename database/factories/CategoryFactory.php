@@ -1,8 +1,8 @@
 <?php
 
-namespace Database\Factories\Post;
+namespace Database\Factories;
 
-use App\Models\Post\Category;
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 
@@ -26,5 +26,5 @@ class CategoryFactory extends Factory
             "SEO_keywords" => implode($this->faker->words(5))
         ];
     }
-    
+
 }

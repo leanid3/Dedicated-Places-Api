@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Post;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,6 +19,7 @@ class Category extends Model
         "SEO_description",
         "SEO_keywords"
     ];
+    protected $dateFormat = 'Y-m-d H:i:s';
 
     public function children(): HasMany
     {

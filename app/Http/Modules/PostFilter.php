@@ -37,11 +37,11 @@ class PostFilter
         if ($this->request->has('categories')) {
             $query->with('categories');
         }
-        if ($this->request->has('comment')) {
-            $query->with('comment');
-        }
-        if ($this->request->has('image')) {
-            $query->with('image');
+        if ($this->request->has('tag_ids')) {
+            $tagIds = $this->request->input('tag_ids'); // Ожидается массив ID тегов
+            $query->whereHas('tags', function ($q) use ($tagIds) {
+                $q->whereIn('id', $tagIds);
+            });
         }
 
         return $query;

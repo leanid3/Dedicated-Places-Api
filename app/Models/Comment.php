@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Models\Post;
+namespace App\Models;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Comment extends Model
 {
+    protected $primaryKey = 'comment_id';
+
     protected $fillable = [
         'parent_id',
         'title',
@@ -17,7 +18,7 @@ class Comment extends Model
         'post_id',
         'author_id'
     ];
-    protected $primaryKey = 'comment_id';
+    protected $dateFormat = 'Y-m-d H:i:s';
     public function post(): BelongsTo
     {
         return $this->belongsTo(Post::class);
@@ -36,5 +37,10 @@ class Comment extends Model
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Comment::class, 'parent_id');
+    }
+
+    public function isAuthor(int $user_id): bool
+    {
+        return  $this->author_id === $user_id;
     }
 }

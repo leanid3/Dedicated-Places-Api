@@ -1,16 +1,20 @@
 <?php
 
-namespace App\Models\Post;
+namespace App\Models;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @method static create(mixed[] $toArray)
+ */
 class Post extends Model
 {
     use HasFactory;
+    protected $table = 'posts';
     protected $primaryKey = 'post_id';
     protected $fillable = [
         "category_id",
@@ -23,6 +27,7 @@ class Post extends Model
         "type",
         "stock",
         "price",
+        "image",
         "params",
         "SEO_title",
         "SEO_description",
@@ -31,6 +36,7 @@ class Post extends Model
         "comment_count",
         "comment_status",
     ];
+    protected $dateFormat = 'Y-m-d H:i:s';
 
     public function casts(): array
     {
@@ -39,14 +45,14 @@ class Post extends Model
         ];
     }
 
-    public function category(): BelongsTo
+    public function categories(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
 
-    public function author(): BelongsTo
+    public function users(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'author_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function comments(): HasMany
@@ -54,13 +60,13 @@ class Post extends Model
         return $this->hasMany(Comment::class, 'post_id');
     }
 
-    public function tags(): HasMany
+    public function tags(): belongsToMany
     {
-        return $this->hasMany(Tag::class, 'post_id');
+        return $this->belongsToMany(Post::class, 'post_tag', 'post_id', 'tag_id');
     }
 
-    public function images(): HasMany
+    public function multiFields(): HasMany
     {
-        return $this->hasMany(Image::class, 'post_id');
+        return $this->hasMany(MultiField::class, 'post_id');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Post\Post;
+use App\Models\Post;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,9 +12,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('image', function (Blueprint $table) {
+        Schema::create('multiFields', function (Blueprint $table) {
             $table->id();
-            $table->text('image');
+            $table->text('path');
             $table->foreignIdFor(Post::Class, 'post_id');
             $table->timestamps();
         });

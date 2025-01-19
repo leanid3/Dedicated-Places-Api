@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Route;
 
-class PostJsonResource extends JsonResource
+class PostResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,26 +17,25 @@ class PostJsonResource extends JsonResource
     {
         return [
             'post_id' => $this->post_id,
-            "category_id" => $this->category_id,
             "title" => $this->title,
             "content" => $this->content,
             "excerpt" => $this->excerpt,
             "slug" => $this->slug,
-            "author_id" =>$this->when(Route::currentRouteNamed() == 'posts.show' ,$this->author_id),
+            "user_id" =>$this->when(Route::currentRouteNamed() == 'posts.show' ,$this->user_id),
             "status" => $this->status,
             "type" => $this->type,
             "stock" => $this->stock,
             "price" => $this->pricez,
-            "images" => $this->image,
+            'MultiField' => MultiFieldResource::collection($this->multiFields),
             "params" => $this->params,
             "SEO_title" => $this->SEO_title,
             "SEO_description" => $this->SEO_description,
             "SEO_keywords" => $this->SEO_keywords,
             "locale"=> $this->locale,
+            "categories" =>new CategoryResource($this->categories),
             "comment_count" => $this->comment_count,
             "comment_status" => $this->comment_status,
-            "category_name" => $this->category->name,
-            "comments" => $this->comments,
+            "comments" => CommentResource::collection($this->comments),
             "created_at" => $this->created_at->format('Y-m-d H:i:s'),
             "updated_at" => $this->updated_at->format('Y-m-d H:i:s'),
 

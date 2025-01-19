@@ -24,6 +24,7 @@ class User extends Authenticatable
         'password',
         'role'
     ];
+    protected $dateFormat = 'Y-m-d H:i:s';
 
     /**
      * The attributes that should be hidden for serialization.
@@ -38,6 +39,11 @@ class User extends Authenticatable
     public function isAdmin() : bool
     {
         return  $this->role === 'admin';
+    }
+
+    public function isBanned() : bool
+    {
+        return  $this->role === 'banned';
     }
     /**
      * Get the attributes that should be cast.
