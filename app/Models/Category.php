@@ -21,13 +21,17 @@ class Category extends Model
     ];
     protected $dateFormat = 'Y-m-d H:i:s';
 
+    public function posts(): hasMany
+    {
+        return $this->hasMany(Post::class, 'category_id', 'category_id');
+    }
     public function children(): HasMany
     {
-        return $this->hasMany(Category::class, 'category_parent_id' );
+        return $this->hasMany(Category::class, 'category_parent_id', 'category_id' );
     }
 
     public function parent(): belongsTo
     {
-        return $this->belongsTo(Category::class, 'category_parent_id' );
+        return $this->belongsTo(Category::class, 'category_parent_id', 'category_id' );
     }
 }

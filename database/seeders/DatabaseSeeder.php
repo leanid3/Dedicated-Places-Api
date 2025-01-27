@@ -3,7 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Post;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -34,6 +36,15 @@ class DatabaseSeeder extends Seeder
 
         // Создание постов с конкретным автором
         $author = User::factory()->create(['name' => 'John Doe']);
-        Post::factory()->count(2)->withAuthor($author)->create();
+        $posts = Post::factory()->count(2)->withAuthor($author)->create();
+        $posts->each(function (Post $post) {
+            $post->comments()->saveMany(Comment::factory()->count(3)->make());
+//        Comment::factory()->count(30)->postExist($post)->userExist($author)->create();
+        });
+
+        $tags = Tag::factory()->count(15)->create();
+        Post::all()->each(function($post) use ($tags){
+            $post->tags()->attach($tags->random(rand(1,3))->pluck('tag_id')->toArray());
+        });
     }
 }

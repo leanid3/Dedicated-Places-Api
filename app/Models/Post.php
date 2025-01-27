@@ -60,7 +60,7 @@ class Post extends Model
         return $this->hasMany(Comment::class, 'post_id');
     }
 
-    public function tags(): belongsToMany
+    public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Post::class, 'post_tag', 'post_id', 'tag_id');
     }

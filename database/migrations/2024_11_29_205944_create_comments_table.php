@@ -18,7 +18,7 @@ return new class extends Migration
             $table->id();
 
             // Убираем дублирование для 'parent_id'
-            $table->foreignIdFor(Comment::class, 'parent_id');
+            $table->foreignIdFor(Comment::class, 'parent_id')->nullable();
             $table->string('title');
             $table->text('comment');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');

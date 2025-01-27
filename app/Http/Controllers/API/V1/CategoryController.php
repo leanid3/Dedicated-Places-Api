@@ -7,6 +7,7 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
@@ -15,7 +16,8 @@ class CategoryController extends Controller
      */
     public function index(Category $category)
     {
-        return CategoryResource::collection($category);
+        $category->with('posts');
+        return CategoryResource::collection($category->all());
     }
 
     /**
@@ -32,6 +34,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
+        $category->with('posts');
         return new CategoryResource($category);
     }
 
