@@ -2,42 +2,36 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Containers\Post\Actions\SearchPostAction;
+use App\Containers\Post\Actions\StorePostAction;
+use App\Containers\Post\Actions\UpdatePostAction;
+use App\Containers\Post\DTO\SearchPostDTO;
+use App\Containers\Post\DTO\StorePostDTO;
+use App\Containers\Post\DTO\UpdatePostDTO;
 use App\Http\Controllers\Controller;
-use App\Http\Modules\PostFilter;
+use App\Http\Requests\GetPostRequest;
+use App\Http\Requests\SearchPostRequest;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
-use App\Services\PostService;
-use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class PostController extends Controller
 {
-    protected PostService $postService;
-    /**
-     * @param PostService $postService
-     */
-    public function __construct(PostService $postService)
-    {
-        $this->postService = $postService;
-    }
+
 
     /**
      * Display a listing of the resource.
-     * @param Request $request
      * @return ResourceCollection
      */
-    public function index(Request $request): ResourceCollection
+    public function index(GetPostRequest $request): ResourceCollection
     {
-        $query = Post::with(['categories', 'tags', 'multifields']);
-
-        $filter = new PostFilter($request);
-        $query = $filter->apply($query);
-
-        $posts = $query->paginate(10);
+        $per_page = $request->input('per_page', 10);
+        
+        $query = Post::with(['tags', 'multifields']);
+        $posts = $query->paginate($per_page);
         return PostResource::collection($posts);
     }
 
@@ -47,10 +41,10 @@ class PostController extends Controller
      * @return PostResource|\Illuminate\Http\JsonResponse
      * @throws \Exception
      */
-    public function store(StorePostRequest $request) : PostResource | \Illuminate\Http\JsonResponse
+    public function store(StorePostRequest $request, StorePostAction $action): PostResource|\Illuminate\Http\JsonResponse
     {
-
-        $post = $this->postService->store($request->all());
+        $dto = new StorePostDTO($request);
+        $post = $action->run($dto);
         return $post instanceof Post
             ? new PostResource($post)
             : response()->json(["message" => $post]);
@@ -73,9 +67,12 @@ class PostController extends Controller
      * @param Post $post
      * @return PostResource
      */
-    public function update(UpdatePostRequest $request, Post $post): PostResource
+    public function update(UpdatePostRequest $request, Post $post, UpdatePostAction $action): PostResource
     {
-        $post = $this->postService->update($request->all(), $post);
+        $dto = new UpdatePostDTO($request);
+        $dto->post_id = $post->post_id;
+
+        $post = $action->run($dto);
         return new PostResource($post);
     }
 
@@ -86,5 +83,21 @@ class PostController extends Controller
     {
         $post->delete();
         return response()->json('пост удален', 202);
+    }
+
+    /**
+     * Search posts
+     * @param \App\Http\Requests\SearchPostRequest $request
+     * @param \App\Containers\Post\Actions\SearchPostAction $action
+     */
+    public function search(SearchPostRequest $request, SearchPostAction $action)
+    {
+        try {
+            $dto = new SearchPostDTO($request);
+            $result = $action->run($dto);
+            return PostResource::collection($result);
+        } catch (\Throwable $th) {
+            return response()->json(['error' => $th->getMessage()], 500);
+        }
     }
 }

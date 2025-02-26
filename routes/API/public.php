@@ -3,7 +3,7 @@
 use App\Http\Controllers\API\V1\AuthController;
 use App\Http\Controllers\API\V1\CategoryController;
 use App\Http\Controllers\API\V1\PostController;
-use App\Http\Controllers\API\V1\TagController;
+use App\Http\Controllers\API\v1\TagController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('/v1/')->middleware('guest')->group(function () {
@@ -13,4 +13,6 @@ Route::prefix('/v1/')->middleware('guest')->group(function () {
     Route::get("/posts/{post}", [PostController::class, "show"])->name("posts.show");
     Route::get("/category", [CategoryController::class, "index"])->name("category.index");
     Route::get("/category/{category}", [CategoryController::class, "show"])->name("category.show");
+    Route::get('/search', [PostController::class, 'search'])->name('posts.search');
+    Route::get('/tags', [TagController::class, 'index'])->name('tags.index');
 });

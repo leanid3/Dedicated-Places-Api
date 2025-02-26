@@ -9,7 +9,6 @@ use App\Http\Resources\TagResource;
 use App\Models\Post;
 use App\Models\Tag;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class TagController extends Controller
 {
@@ -18,9 +17,9 @@ class TagController extends Controller
      * @param Post $post
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index(Post $post)
+    public function index()
     {
-        $tags = $post->tags()->get();
+        $tags = Tag::all();
         return TagResource::collection($tags);
     }
 
