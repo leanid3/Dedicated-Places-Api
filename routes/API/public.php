@@ -6,7 +6,7 @@ use App\Http\Controllers\API\V1\PostController;
 use App\Http\Controllers\API\v1\TagController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('/v1/')->middleware('guest')->group(function () {
+Route::prefix('/v1/')->group(function () {
     Route::post("/register", [AuthController::class, "register"]);
     Route::post("/login", [AuthController::class, "login"]);
     Route::get("/posts", [PostController::class, "index"])->name("posts.index");
