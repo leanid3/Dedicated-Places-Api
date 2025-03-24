@@ -29,7 +29,7 @@ class PostController extends Controller
     public function index(GetPostRequest $request): ResourceCollection
     {
         $per_page = $request->input('per_page', 10);
-        
+
         $query = Post::with(['tags', 'multifields']);
         $posts = $query->paginate($per_page);
         return PostResource::collection($posts);
@@ -83,14 +83,34 @@ class PostController extends Controller
      * @param \App\Http\Requests\SearchPostRequest $request
      * @param \App\Containers\Post\Actions\SearchPostAction $action
      */
-    public function search(SearchPostRequest $request, SearchPostAction $action)
-    {
-        try {
-            $dto = new SearchPostDTO($request);
-            $result = $action->run($dto);
-            return PostResource::collection($result);
-        } catch (\Throwable $th) {
-            return response()->json(['error' => $th->getMessage()], 500);
+    public function search(SearchPostRequest $request)
+{
+    try {
+        $query = Post::with(['tags', 'multifields']);
+
+        // Поиск по тексту (если передан параметр query)
+        if ($request->filled('query')) {
+            $searchTerm = $request->input('query');
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('title', 'like', "%{$searchTerm}%")
+                  ->orWhere('content', 'like', "%{$searchTerm}%");
+            });
         }
+
+        // Фильтрация по тегам (если передан параметр tags)
+        if ($request->filled('tags')) {
+            $tags = is_array($request->tags) ? $request->tags : explode(',', $request->tags);
+            
+            $query->whereHas('tags', function ($q) use ($tags) {
+                $q->whereIn('id', $tags); // Исправлено: фильтруем по ID тегов
+            });
+        }
+
+        $posts = $query->paginate(10);
+        return PostResource::collection($posts);
+
+    } catch (\Throwable $th) {
+        return response()->json(['error' => $th->getMessage()], 500);
     }
+}
 }
