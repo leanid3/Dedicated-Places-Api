@@ -7,7 +7,9 @@ use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -25,29 +27,26 @@ class AuthController extends Controller
 
     public function login(LoginUserRequest $request)
     {
-        if (!Auth::attempt($request->only(['email', 'password']))) {
+        $user = User::where('email', $request->email)->first();
+        if (!$user && Hash::check($request->password, $user->password)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-        $user = Auth::user();
         $user->tokens()->delete();
         $token = $user->createToken(config('app.name'))->plainTextToken;
         return response()->json(compact('user', 'token'));
     }
     public function profile()
     {
-        \Log::info('Profile method reached');
         $user = Auth::user();
         if (!$user) {
-            \Log::warning('User is not authenticated');
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
-        \Log::info('User fetched', ['user_id' => $user->id]);
         return new UserResource($user);
 
     }
-    public function logout()
+    public function logout(Request $request)
     {
-        Auth::user()->currentAccessToken()->delete();
+        $request->user()->currentAccessToken()->delete();
         return response()->json('Logged out successfully');
     }
 }

@@ -39,15 +39,11 @@ class PostController extends Controller
      * Store a newly created resource in storage.
      * @param StorePostRequest $request
      * @return PostResource|\Illuminate\Http\JsonResponse
-     * @throws \Exception
      */
-    public function store(StorePostRequest $request, StorePostAction $action): PostResource|\Illuminate\Http\JsonResponse
+    public function store(StorePostRequest $request): PostResource|\Illuminate\Http\JsonResponse
     {
-        $dto = new StorePostDTO($request);
-        $post = $action->run($dto);
-        return $post instanceof Post
-            ? new PostResource($post)
-            : response()->json(["message" => $post]);
+        $post = Post::create($request->all());
+        return new PostResource($post);
     }
 
     /**
@@ -67,12 +63,9 @@ class PostController extends Controller
      * @param Post $post
      * @return PostResource
      */
-    public function update(UpdatePostRequest $request, Post $post, UpdatePostAction $action): PostResource
+    public function update(UpdatePostRequest $request, Post $post): PostResource
     {
-        $dto = new UpdatePostDTO($request);
-        $dto->post_id = $post->post_id;
-
-        $post = $action->run($dto);
+        $post->update($request->all());
         return new PostResource($post);
     }
 

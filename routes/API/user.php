@@ -9,7 +9,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum'])->prefix('/v1/')->group(function () {
     Route::get('/user', [AuthController::class, "profile"]);
-    Route::get("/logout", [AuthController::class, "logout"]);
+    Route::post("/logout", [AuthController::class, "logout"]);
     Route::post('/forgot-password', [PasswordResetLinkController::class, 'store']);
     Route::post('/reset-password', [NewPasswordController::class, 'store']);
     Route::get('/verify-email/{id}/{hash}', VerifyEmailController::class);

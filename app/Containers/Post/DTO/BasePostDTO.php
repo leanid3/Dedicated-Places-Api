@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class BasePostDTO {
     public int $post_id;
-    public int $category_id;
+    public ?int $category_id;
     public string $title;
     public ?string $content;
     public ?string $excerpt;
@@ -27,7 +27,6 @@ class BasePostDTO {
 
     public function __construct(Request $request)
     {
-        $this->post_id = $request->input('post_id');
         $this->category_id = $request->input('category_id');
         $this->title = $request->input('title');
         $this->content = $request->input('content');
