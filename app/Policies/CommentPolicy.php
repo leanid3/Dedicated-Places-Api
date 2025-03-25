@@ -42,9 +42,10 @@ class CommentPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Comment $comment): bool
+    public function update(User $user,Post $post, Comment $comment): bool
     {
-        return $comment->isAuthor($user->id) && !$user->isBanned();
+
+        return $comment->post_id === $post->post_id && $comment->isAuthor($user->id) && !$user->isBanned();
     }
 
     /**

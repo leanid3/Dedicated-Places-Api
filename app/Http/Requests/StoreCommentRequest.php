@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class StoreCommentRequest extends FormRequest
 {
@@ -12,7 +13,7 @@ class StoreCommentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Auth::check();
     }
 
     /**
@@ -26,9 +27,14 @@ class StoreCommentRequest extends FormRequest
             'parent_id' => ['required', 'integer', 'exists:comments,id'],
             'title' => ['required', 'string'],
             'comment' => ['required', 'string'],
-            'status' => ['nullable',"string"],
-            'post_id' => ['required', 'integer', 'exists:posts,id'],
-            'author_id ' => ['required', 'integer', 'exists:users,id'],
+            'status' => ['nullable', "string"],
+            'user_id'=> ['required', 'integer', 'exists:users,id']
         ];
+    }
+    public function prepareForValidation(): void
+    {
+        $this->merge([
+            'user_id' => Auth::id(), 
+        ]);
     }
 }

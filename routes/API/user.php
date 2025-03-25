@@ -14,5 +14,9 @@ Route::middleware(['auth:sanctum'])->prefix('/v1/')->group(function () {
     Route::post('/reset-password', [NewPasswordController::class, 'store']);
     Route::get('/verify-email/{id}/{hash}', VerifyEmailController::class);
     Route::post('/email/verification-notification', [EmailVerificationNotificationController::class, 'store']);
-    Route::apiResource('comment', CommentController::class)->except(['index', 'show']);
+
+    // comments
+    Route::post('/posts/{post}/comments', [CommentController::class, 'store']);
+    Route::put('/posts/{post}/comments/{comment}', [CommentController::class, 'update']);
+    Route::delete('/posts/{post}/comments/{comment}', [CommentController::class, 'destroy']);
 });

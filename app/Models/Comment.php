@@ -10,15 +10,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Comment extends Model
 {
     use HasFactory;
-    protected $primaryKey = 'comment_id';
-
     protected $fillable = [
         'parent_id',
         'title',
         'comment',
         'status',
         'post_id',
-        'author_id'
+        'user_id'
     ];
     protected $dateFormat = 'Y-m-d H:i:s';
     public function post(): BelongsTo
@@ -28,7 +26,7 @@ class Comment extends Model
 
     public function author(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'author_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function children(): HasMany
@@ -43,6 +41,6 @@ class Comment extends Model
 
     public function isAuthor(int $user_id): bool
     {
-        return  $this->author_id === $user_id;
+        return  $this->user_id === $user_id;
     }
 }

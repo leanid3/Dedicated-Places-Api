@@ -29,9 +29,10 @@ class TagController extends Controller
      * @param Tag $tag
      * @return TagResource
      */
-    public function store(StoreTagRequest $request, Tag $tag): TagResource
+    public function store(StoreTagRequest $request): TagResource
     {
-        $tag = $tag->create($request->all());
+        $validateDate = $request->validated();
+        $tag = Tag::create($validateDate);
         return new TagResource($tag);
     }
 

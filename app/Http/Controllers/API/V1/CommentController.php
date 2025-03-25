@@ -32,7 +32,10 @@ class CommentController extends Controller
      */
     public function store(StoreCommentRequest $request, Post $post): CommentResource
     {
-        $comment = $post->comments()->create($request->all());
+        $validateData = $request->validated();
+
+        $validateData['post_id'] = $post->post_id;
+        $comment = $post->comments()->create($validateData);
         return new CommentResource($comment);
     }
 
@@ -41,8 +44,11 @@ class CommentController extends Controller
      * @param Comment $comment
      * @return CommentResource
      */
-    public function show(Comment $comment): CommentResource
+    public function show(Post $post, Comment $comment): CommentResource
     {
+        if ($post->post_id !== $comment->post_id) {
+            return response()->json(['error'=> 'id поста не совпадает с id поста в комментарии']);
+        }
         return new CommentResource($comment);
     }
 
@@ -52,9 +58,10 @@ class CommentController extends Controller
      * @param Comment $comment
      * @return CommentResource
      */
-    public function update(UpdateCommentRequest $request, Comment $comment): CommentResource
+    public function update(UpdateCommentRequest $request,  Post $post, Comment $comment): CommentResource
     {
-        $comment->update($request->all());
+        $validateData = $request->validated();
+        $comment->update($validateData);
         return new CommentResource($comment);
     }
 

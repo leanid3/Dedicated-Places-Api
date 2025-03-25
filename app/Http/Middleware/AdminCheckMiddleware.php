@@ -16,7 +16,7 @@ class AdminCheckMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user()->isAdmin()) {
+        if (!empty(Auth::user()) && Auth::user()->role == 'admin') {
             return $next($request);
         }
         return response('Error:Unauthorized.', Response::HTTP_UNAUTHORIZED);

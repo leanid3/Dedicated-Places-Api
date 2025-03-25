@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AdminCheckMiddleware;
 use App\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
