@@ -1,11 +1,11 @@
-version: '3.8'
+version: '3'
 
 services:
   # PHP Service
   app:
     build:
       context: .
-      dockerfile: ./docker/php/DockerFile
+      dockerfile: ./docker/php/Dockerfile
     container_name: app
     restart: unless-stopped
     tty: true
@@ -44,23 +44,8 @@ services:
     networks:
       - laravel-network
 
-  db_init:
-    image: alpine
-    command:
-      - sh
-      - -c
-      - |
-        mkdir -p /data && 
-        chown 999:999 /data
-    volumes:
-      - ./mysql_data:/data
-    networks:
-      - laravel-network
-
   # MySQL Service
   db:
-    build:
-      context: ./docker/mysql
     image: mysql:8.0
     container_name: db
     restart: unless-stopped
@@ -72,10 +57,8 @@ services:
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-    depends_on:
-      - db_init
     volumes:
-      - ./db:/var/lib/mysql
+      - ./docker/mysql:/var/lib/mysql
     networks:
       - laravel-network
 
@@ -100,8 +83,3 @@ services:
 networks:
   laravel-network:
     driver: bridge
-
-# Docker Volumes
-volumes:
-  dbdata:
-    driver: local
