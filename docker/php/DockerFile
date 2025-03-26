@@ -32,14 +32,19 @@ RUN composer install --prefer-dist --no-scripts --no-progress --no-interaction
 # Копируем весь код приложения
 COPY src .
 COPY /src/.env.example /var/www/.env
+
+# Устанавливаем зависимости Composer
+RUN composer install --prefer-dist --no-progress --no-interaction
+
 # Запускаем скрипты Composer
 RUN composer dump-autoload --optimize
+
+# Генерируем ключ приложения Laravel
+# RUN php artisan key:generate --ansi
 
 # Устанавливаем права
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache
-
-RUN php artisan key:generate --ansi
 
 # Указываем рабочую директорию
 WORKDIR /var/www

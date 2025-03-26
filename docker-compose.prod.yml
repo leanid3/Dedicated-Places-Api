@@ -11,9 +11,9 @@ services:
       SERVICE_NAME: app
       SERVICE_TAGS: dev
       APP_NAME: ${APP_NAME}
-      APP_ENV: ${APP_ENV}
+      APP_ENV: local
       APP_KEY: ${APP_KEY}
-      APP_DEBUG: ${APP_DEBUG}
+      APP_DEBUG: 'true'
       APP_URL: ${APP_URL}
       DB_CONNECTION: ${DB_CONNECTION}
       DB_HOST: ${DB_HOST}
@@ -29,8 +29,7 @@ services:
     networks:
       - laravel-network
     depends_on:
-      db:
-        condition: service_healthy  # Проверяем, что db готов
+      - db  # Добавляем зависимость от сервиса db
 
   # Nginx Service
   webserver:
@@ -63,11 +62,6 @@ services:
       - ./docker/mysql:/var/lib/mysql
     networks:
       - laravel-network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
 
   # phpMyAdmin Service
   phpmyadmin:
