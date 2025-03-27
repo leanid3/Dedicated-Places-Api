@@ -10,17 +10,17 @@ services:
     environment:
       SERVICE_NAME: app
       SERVICE_TAGS: dev
-      APP_NAME: ${APP_NAME}
-      APP_ENV: ${APP_ENV}
-      APP_KEY: ${APP_KEY}
-      APP_DEBUG: ${APP_DEBUG}
-      APP_URL: ${APP_URL}
-      DB_CONNECTION: ${DB_CONNECTION}
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
-      DB_DATABASE: ${DB_DATABASE}
-      DB_USERNAME: ${DB_USERNAME}
-      DB_PASSWORD: ${DB_PASSWORD}
+      # APP_NAME: ${APP_NAME}
+      # APP_ENV: ${APP_ENV}
+      # APP_KEY: ${APP_KEY}
+      # APP_DEBUG: ${APP_DEBUG}
+      # APP_URL: ${APP_URL}
+      # DB_CONNECTION: ${DB_CONNECTION}
+      # DB_HOST: ${DB_HOST}
+      # DB_PORT: ${DB_PORT}
+      # DB_DATABASE: ${DB_DATABASE}
+      # DB_USERNAME: ${DB_USERNAME}
+      # DB_PASSWORD: ${DB_PASSWORD}
     working_dir: /var/www
     command: php-fpm
     ports:
@@ -46,6 +46,8 @@ services:
       - ./docker/nginx:/etc/nginx/conf.d
     networks:
       - laravel-network
+    depends_on:
+      - app
 
   # MySQL Service
   db:
@@ -56,10 +58,10 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_USER: ${DB_USERNAME}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: dedicated_places_api
+      MYSQL_USER: laravel_user
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: secret
     volumes:
       - ./docker/mysql:/var/lib/mysql
     command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
@@ -76,7 +78,7 @@ services:
       - "8080:80"
     environment:
       PMA_HOST: db
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: secret
     depends_on:
       - db
     networks:

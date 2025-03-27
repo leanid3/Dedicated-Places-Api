@@ -31,20 +31,22 @@ RUN composer install --prefer-dist --no-scripts --no-progress --no-interaction
 
 # Копируем весь код приложения
 COPY src .
-COPY /src/.env.example /var/www/.env
 
-# Устанавливаем зависимости Composer
-RUN composer install --prefer-dist --no-progress --no-interaction
-
+# Исправляем права ПЕРЕД установкой зависимостей
+RUN chown -R www-data:www-data /var/www \
+    && composer install --no-interaction --no-scripts --prefer-dist \
+    && composer dump-autoload --optimize
 # Запускаем скрипты Composer
 RUN composer dump-autoload --optimize
 
-# Генерируем ключ приложения Laravel
-# RUN php artisan key:generate --ansi
-
 # Устанавливаем права
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
 # Указываем рабочую директорию
 WORKDIR /var/www
+
+COPY docker/php/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["php-fpm"]

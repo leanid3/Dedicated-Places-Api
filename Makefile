@@ -5,4 +5,12 @@ key:
 composer:
 	docker-compose exec app composer install
 docker-dev:
-	docker-compose down & docker-compose build --ne-cache & docker-compose up -d
+	docker-compose down & docker-compose build --no-cache & docker-compose up -d
+down: 
+	docker-compose down
+build:
+	docker-compose build
+build-cache: 
+	docker-compose build --no-cache
+up:
+	docker-compose up -d
